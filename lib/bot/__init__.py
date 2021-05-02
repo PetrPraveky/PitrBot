@@ -14,8 +14,14 @@ class Bot(BotBase):
         
         super().__init__(command_prefix=PREFIX, owner_ids=OWNER_IDS)
         
-    def run(self):
-        pass
+    def run(self, version):
+        self.version = version
+        
+        with open("./lib/bot/token.0", "r", encoding="utf-8") as tf:
+            self.TOKEN = tf.read()
+            
+        print("running bot..")
+        super().run(self.TOKEN, reconnect=True)
     
     async def on_connect(self):
         print("bot connected")
@@ -24,7 +30,12 @@ class Bot(BotBase):
         print("bot disconnected")
         
     async def on_ready(self):
-        pass
+        if not self.ready:
+            self.ready = True
+            self.guild = self.get_guild(818123510366732328)
+            print("bot ready")
+        else:
+            print("bot reconnected")
     
     async def on_message(self):
         pass
