@@ -1,6 +1,8 @@
-from discord import Intents
+from datetime import datetime
+
+from discord import Intents, colour
 from discord.ext.commands import Bot as BotBase
-from discord import Embed
+from discord import Embed, File
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -43,9 +45,13 @@ class Bot(BotBase):
             print("bot ready")
             
             channel = self.get_channel(823477241324371968)
-            await channel.send("Now online!")
             
-            embed = Embed(title="Now online!", description="PitrBot is now online.")
+            embed = Embed(
+                title="Now online!", 
+                description="PitrBot is now online.", 
+                colour=0xFF0000,
+                timestamp=datetime.utcnow()
+                )
             fields = [
                 ("Name", "Value", True),
                 ("Another field", "This field is next to the other one", True),
@@ -53,8 +59,13 @@ class Bot(BotBase):
                 ]
             for name, value, inline, in fields:
                 embed.add_field(name=name, value=value, inline=inline)
+            embed.set_author(name="PitrBot Dev", icon_url=self.guild.icon_url)
+            embed.set_footer(text="This is a footer")
+            embed.set_thumbnail(url=self.guild.icon_url)
+            embed.set_image(url=self.guild.icon_url)
             await channel.send(embed=embed)
             
+            await channel.send(file=File("./data/images/pick.jpg"))
             
         else:
             print("bot reconnected")
