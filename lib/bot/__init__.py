@@ -1,5 +1,7 @@
 from discord import Intents
 from discord.ext.commands import Bot as BotBase
+from discord import Embed
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 PREFIX = "!p"
@@ -39,6 +41,21 @@ class Bot(BotBase):
             self.ready = True
             self.guild = self.get_guild(818123510366732328)
             print("bot ready")
+            
+            channel = self.get_channel(823477241324371968)
+            await channel.send("Now online!")
+            
+            embed = Embed(title="Now online!", description="PitrBot is now online.")
+            fields = [
+                ("Name", "Value", True),
+                ("Another field", "This field is next to the other one", True),
+                ("A non-inline field", "This field will appear on it's own row.", False)
+                ]
+            for name, value, inline, in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+            await channel.send(embed=embed)
+            
+            
         else:
             print("bot reconnected")
     
