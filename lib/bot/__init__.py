@@ -1,3 +1,5 @@
+import discord
+
 from datetime import datetime
 
 from discord import Intents, colour
@@ -6,7 +8,9 @@ from discord import Embed, File
 from discord.ext.commands import CommandNotFound
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from discord.ext.commands.errors import CommandNotFound
+from apscheduler.triggers.cron import CronTrigger
+
+from ..db import db
 
 PREFIX = "!p"
 OWNER_IDS = [515161252037787659]
@@ -19,6 +23,7 @@ class Bot(BotBase):
         self.guild = None
         self.scheduler = AsyncIOScheduler()
         
+        db.autosave(self.scheduler)
         super().__init__(
             command_prefix=PREFIX, 
             owner_ids=OWNER_IDS,
@@ -43,10 +48,9 @@ class Bot(BotBase):
     async def on_error(self, err, *args, **kwargs):
         if err == "on_command_error":
             await args[0].send("Something went wrong.")
-        channel = self.get_channel(818123510366732328)
-        print("Error")
+        print("  --  Error")
             
-        raise
+        # raise
     
     async def on_command_error(self, ctx, exc):
         if isinstance(exc, CommandNotFound):
@@ -60,9 +64,10 @@ class Bot(BotBase):
         if not self.ready:
             self.ready = True
             self.guild = self.get_guild(818123510366732328)
-            print("bot ready")
+            self.scheduler.start()
             
             channel = self.get_channel(823477241324371968)
+            await channel.send("Bot is running")
             
             embed = Embed(
                 title="Now online!", 
@@ -85,7 +90,9 @@ class Bot(BotBase):
             embed.set_image(url=self.guild.icon_url)
             await channel.send(embed=embed)
             
-            # await channel.send(file=File("./data/images/pick.jpg"))
+            await channel.send(file=File("./data/images/pick.jpg"))
+            
+            print("bot ready")
             
         else:
             print("bot reconnected")
